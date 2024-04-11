@@ -21,6 +21,9 @@ var _ = {};
 *   _.identity({a: "b"}) === {a: "b"}
 */
 
+_.identity = function(val) {
+    return val;
+}
 
 /** _.typeOf
 * Arguments:
@@ -28,19 +31,40 @@ var _ = {};
 * Objectives:
 *   1) Return the type of <value> as a string
 *       Types are one of:
-*          - "string"
-*          - "array"
-*          - "object"
-*          - "undefined"
-*          - "number"
-*          - "boolean"
-*          - "null"
-*          - "function"
+*          - "string" *
+*          - "array" *
+*          - "object" *
+*          - "undefined" *
+*          - "number" *
+*          - "boolean" *
+*          - "null" *
+*          - "function" *
 * Examples:
 * _.typeOf(134) -> "number"
 * _.typeOf("javascript") -> "string"
 * _.typeOf([1,2,3]) -> "array"
 */
+_.typeOf = function(val) {
+    if (typeof val === 'string') {
+        return 'string';
+    } else if (Array.isArray(val)) {
+        return 'array';
+    } else if (typeof val === 'number') {
+        return 'number';
+    } else if (typeof val === 'function') {
+        return 'function';
+    } else if (typeof val === 'boolean') {
+        return 'boolean';
+    } else if (val === undefined) {
+        return 'undefined';
+    } else if (val === null) {
+        return 'null';
+    } else if (Object.prototype.toString.call(val) === '[object Object]') {
+        return 'object'; 
+    }
+}
+
+
 
 
 /** _.first
@@ -61,6 +85,29 @@ var _ = {};
 *   _.first(["a", "b", "c"], 2) -> ["a", "b"]
 */
 
+_.first = function(arr, num) {
+
+    if (Array.isArray(arr) === false) {
+        return [];
+    } else if (typeof num !== 'number' || num === null) {
+        return arr[0]; 
+    } else if (num < 0) {
+        return [];
+    } else if (num > arr.length) {
+        return arr;
+    } else {
+        let result = [];
+        for ( let i = 0; i < num; i++) {
+            result.push(arr[i]);
+            
+        }
+        return result;
+    }
+    
+}
+
+
+
 
 /** _.last
 * Arguments:
@@ -80,6 +127,23 @@ var _ = {};
 *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
 */
 
+_.last = function(arr, num) {
+    if (Array.isArray(arr) === false) {
+        return [];
+    } else if (typeof num !== 'number' || num === null) {
+        return arr[arr.length - 1];
+    } else if (num < 0) {
+        return [];
+    } else if (num > arr.length) {
+        return arr;
+    } else {
+        let result = arr.slice(-2);
+        return result;
+    }
+}
+
+
+
 
 /** _.indexOf
 * Arguments:
@@ -97,6 +161,15 @@ var _ = {};
 *   _.indexOf(["a","b","c"], "d") -> -1
 */
 
+_.indexOf = function(arr, val) {
+    if (arr.includes(val) === true) {
+        return arr.findIndex( elem => elem === val );
+    } else {
+        return -1;
+    }
+} 
+
+
 
 /** _.contains
 * Arguments:
@@ -112,6 +185,14 @@ var _ = {};
 * Examples:
 *   _.contains([1,"two", 3.14], "two") -> true
 */
+
+_.contains = function(arr, val) {
+    for ( let i = 0; i < arr.length; i++ ) {
+        return arr === null ? false 
+            : arr.includes(val) ? true
+            : false; 
+    } 
+}
 
 
 /** _.each
@@ -131,6 +212,18 @@ var _ = {};
 */
 
 
+_.each = function(collection, func) {
+    if (Array.isArray(collection)) {
+        for ( let i = 0; i < collection.length; i++ ) {
+            console.log(func(collection[i], i, collection));
+        } 
+    } else {
+        for ( let key in collection) {
+            console.log(func(collection[key], key, collection));
+        }
+    }
+}
+
 /** _.unique
 * Arguments:
 *   1) An array
@@ -141,6 +234,15 @@ var _ = {};
 *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
 */
 
+_.unique = function(arr) {
+    let uniqueArr = [];
+    for ( let i = 0; i < arr.length; i++ ) {
+        if (_.indexOf(uniqueArr, arr[i]) === -1) {
+            uniqueArr.push(arr[i]);
+        }
+    }
+    return uniqueArr;
+}
 
 /** _.filter
 * Arguments:
@@ -158,6 +260,16 @@ var _ = {};
 *   use _.each in your implementation
 */
 
+_.filter = function (arr, func) {
+    let newArr = [];
+    for ( let i = 0; i < arr.length; i++ ) {
+        if (func(arr[i], i, arr)) {
+            newArr.push(arr[i]);
+        }
+    }     
+    return newArr;
+}
+
 
 /** _.reject
 * Arguments:
@@ -171,6 +283,17 @@ var _ = {};
 * Examples:
 *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
 */
+
+_.reject = function(arr, func) {
+    let newArr = [];
+    for ( let i = 0; i < arr.length; i++ ) {
+        if ( !func(arr[i], i, arr )) {
+            newArr.push(arr[i]);
+        }
+    }
+    return newArr;
+}
+
 
 
 /** _.partition
@@ -192,6 +315,18 @@ var _ = {};
 }
 */
 
+_.partition = function(arr, func) {
+    let newArr = [[],[]];
+    for ( let i = 0; i < arr.length; i++ ){
+        if ( func(arr[i], i, arr)) {
+            newArr[0].push(arr[i]);
+        } else if ( !func(arr[i], i, arr)) {
+            newArr[1].push(arr[i]);
+        }
+    }
+    return newArr;
+}
+
 
 /** _.map
 * Arguments:
@@ -209,6 +344,20 @@ var _ = {};
 *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
 */
 
+_.map = function(collection, func) {
+    let newArr = [];
+    if ( Array.isArray(collection) === true ) {
+        for ( let i = 0; i < collection.length; i++ ) {
+           newArr.push(func(collection[i], i, collection));
+        }
+    } else {
+        for ( let key in collection ) {
+            newArr.push(func(collection[key], key, collection));
+        }
+    }
+    return newArr;
+}
+
 
 /** _.pluck
 * Arguments:
@@ -220,6 +369,14 @@ var _ = {};
 * Examples:
 *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
 */
+
+_.pluck = function(arr, prop) {
+    let newArr = [];
+    newArr = _.map(arr, function(elem) {
+        return elem[prop];
+    });
+    return newArr;
+}
 
 
 /** _.every
@@ -243,6 +400,44 @@ var _ = {};
 *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
 */
 
+_.every = function(collection, func) {
+    if ( Array.isArray(collection) ) {
+        if ( func === undefined ) {
+            for ( let i = 0; i < collection.length; i++ ) {
+                if ( !collection[i] ) {
+                    return false;
+                } 
+            } 
+        
+        } else {
+            for ( let i = 0; i < collection.length; i++ ) {
+                if ( !func(collection[i]) ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+        
+    }
+    if ( Object.prototype.toString.call(collection === '[object Object]')) {
+        if ( func === undefined ) {
+            for ( let key in collection ) {
+                if ( !collection[key] ) {
+                    return false;
+                }
+            }
+        } else {
+            for (let key in collection) {
+                if ( !collection[key] ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+   
+}
+
 
 /** _.some
 * Arguments:
@@ -265,6 +460,41 @@ var _ = {};
 *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
 */
 
+_.some = function(collection, func) {
+    if ( Array.isArray(collection) === true ) {
+        if ( func === undefined ) {
+            for ( let i = 0; i < collection.length; i++ ) {
+                if ( collection[i] ) {
+                    return true;
+                }
+            }
+        }
+        else {
+            for ( let i = 0; i < collection.length; i++ ) {
+             if ( func(collection[i], i, collection) )
+                return true;
+            }
+        }
+    return false;
+    }
+    else if ( Object.prototype.toString.call(collection) === '[object Object]' ) {
+        if ( func === undefined ) {
+            for ( let key in collection ) {
+                if ( collection[key] ) {
+                    return true;
+                }
+            }
+        } else {
+            for ( let key in collection ) {
+                if ( func(collection[key], key, collection ) ) {
+                    return true;
+                }
+            }
+        }
+    }   
+    return false;
+}
+
 
 /** _.reduce
 * Arguments:
@@ -285,6 +515,23 @@ var _ = {};
 *   _.reduce([1,2,3], function(previousSum, currentValue, currentIndex){ return previousSum + currentValue }, 0) -> 6
 */
 
+_.reduce = function(arr, func, seed) {
+    let output;
+    if ( seed === undefined ) {
+        output = arr[0];
+        for ( let i = 1; i < arr.length; i++ ) {
+            output = func(output, arr[i], i);
+        }
+    } else { 
+        output = seed;
+        for ( let i = 0; i < arr.length; i++ ) {
+            output = func(output, arr[i], i) 
+        }
+    }
+    return output;
+}
+
+
 
 /** _.extend
 * Arguments:
@@ -300,6 +547,14 @@ var _ = {};
 *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
 *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
 */
+
+_.extend = function(obj1,...objs) {
+    Object.assign(obj1, ...objs);
+    
+    return obj1;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////
